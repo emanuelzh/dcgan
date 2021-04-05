@@ -121,7 +121,7 @@ real_batch = next(iter(dataloader))
 plt.figure(figsize=(8,8))
 plt.axis("off")
 plt.title("Training Images")
-plt.imsave('data/results/training.png',np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=2, normalize=True).cpu(),(1,2,0)))
+plt.imsave('data/results/training.png', arr=np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=2, normalize=True).cpu(),(1,2,0)))
 
 
 # custom weights initialization called on netG and netD
@@ -434,7 +434,7 @@ plt.title("Real Images")
 plt.subplot(1,2,2)
 plt.axis("off")
 plt.title("Fake Images")
-plt.imsave('data/results/results.png', np.transpose(img_list[-1],(1,2,0)))
+plt.imsave('data/results/results.png', arr=np.transpose(img_list[-1],(1,2,0)))
 #plt.show()
 
 

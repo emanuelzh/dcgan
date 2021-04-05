@@ -409,7 +409,7 @@ ims = [[plt.imshow(np.transpose(i,(1,2,0)), animated=True)] for i in img_list]
 ani = animation.ArtistAnimation(fig, ims, interval=200, repeat_delay=200, blit=True)
 
 print("Saving animation...")
-ani.save('data/output.mp4',codec='mpeg4', fps=15)
+ani.save('data/results/animation.gif', writer='PillowWriter', fps=12)
 
 #HTML(ani.to_jshtml())
 

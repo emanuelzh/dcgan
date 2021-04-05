@@ -362,7 +362,7 @@ for epoch in range(num_epochs):
         if (iters % 500 == 0) or ((epoch == num_epochs-1) and (i == len(dataloader)-1)):
             with torch.no_grad():
                 fake = netG(fixed_noise).detach().cpu()
-            vutils.save_image(fake, 'data/training/'+str(iters)+'.png')
+            vutils.save_image(fake, 'data/results/training/'+str(iters)+'.png')
             img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
             
         iters += 1

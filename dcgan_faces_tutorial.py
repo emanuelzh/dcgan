@@ -121,7 +121,7 @@ real_batch = next(iter(dataloader))
 plt.figure(figsize=(8,8))
 plt.axis("off")
 plt.title("Training Images")
-plt.imshow(np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=2, normalize=True).cpu(),(1,2,0)))
+plt.imsave('data/results/training.png',np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=2, normalize=True).cpu(),(1,2,0)))
 
 
 # custom weights initialization called on netG and netD
@@ -389,7 +389,7 @@ plt.plot(D_losses,label="D")
 plt.xlabel("iterations")
 plt.ylabel("Loss")
 plt.legend()
-plt.show()
+plt.imsave('data/results/training.png')
 
 
 ######################################################################
@@ -408,7 +408,7 @@ ims = [[plt.imshow(np.transpose(i,(1,2,0)), animated=True)] for i in img_list]
 ani = animation.ArtistAnimation(fig, ims, interval=200, repeat_delay=200, blit=True)
 
 print("Saving animation...")
-ani.save('data/output.mp4',codec='mpeg4', fps=15)
+ani.save('data/output.mp4', codec='mpeg4', fps=15)
 
 #HTML(ani.to_jshtml())
 
@@ -428,14 +428,14 @@ plt.figure(figsize=(15,15))
 plt.subplot(1,2,1)
 plt.axis("off")
 plt.title("Real Images")
-plt.imshow(np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=5, normalize=True).cpu(),(1,2,0)))
+#plt.imsave('data/results/real.png', np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=5, normalize=True).cpu(),(1,2,0)))
 
 # Plot the fake images from the last epoch
 plt.subplot(1,2,2)
 plt.axis("off")
 plt.title("Fake Images")
-plt.imshow(np.transpose(img_list[-1],(1,2,0)))
-plt.show()
+plt.imsave('data/results/results.png', np.transpose(img_list[-1],(1,2,0)))
+#plt.show()
 
 
 ######################################################################
@@ -454,3 +454,4 @@ plt.show()
 #    `music <https://deepmind.com/blog/wavenet-generative-model-raw-audio/>`__
 # 
 
+print("Done !!")

@@ -122,7 +122,7 @@ plt.figure(figsize=(8,8))
 plt.axis("off")
 plt.title("Training Images")
 plt.imshow(np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=2, normalize=True).cpu(),(1,2,0)))
-
+plt.savefig('data/results/training.png')
 
 # custom weights initialization called on netG and netD
 def weights_init(m):
@@ -390,6 +390,7 @@ plt.xlabel("iterations")
 plt.ylabel("Loss")
 plt.legend()
 plt.show()
+plt.savefig('data/results/gen_disc.png')
 
 
 ######################################################################
@@ -436,7 +437,7 @@ plt.axis("off")
 plt.title("Fake Images")
 plt.imshow(np.transpose(img_list[-1],(1,2,0)))
 plt.show()
-
+plt.savefig('data/results/real_vs_fake.png')
 
 ######################################################################
 # Where to Go Next

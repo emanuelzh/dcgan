@@ -88,7 +88,7 @@ ngf = 64
 ndf = 64
 
 # Number of training epochs
-num_epochs = 10
+num_epochs = 30
 
 # Learning rate for optimizers
 lr = 0.0002
@@ -362,8 +362,14 @@ for epoch in range(num_epochs):
         if (iters % 500 == 0) or ((epoch == num_epochs-1) and (i == len(dataloader)-1)):
             with torch.no_grad():
                 fake = netG(fixed_noise).detach().cpu()
-            vutils.save_image(fake, 'data/results/training/'+str(iters)+'.png')
+            #vutils.save_image(fake, 'data/results/training/'+str(iters)+'.png')
             img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
+
+        if (iters % 100 == 0):
+            with torch.no_grad():
+                fake = netG(fixed_noise).detach().cpu()
+            vutils.save_image(fake, 'data/results/training/'+str(iters)+'.png')
+
             
         iters += 1
 

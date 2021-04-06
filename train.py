@@ -79,7 +79,7 @@ image_size = 64
 nc = 3
 
 # Size of z latent vector (i.e. size of generator input)
-nz = 110
+nz = 100
 
 # Size of feature maps in generator
 ngf = 64
@@ -88,7 +88,7 @@ ngf = 64
 ndf = 64
 
 # Number of training epochs
-num_epochs = 30
+num_epochs = 60
 
 # Learning rate for optimizers
 lr = 0.0002
@@ -109,7 +109,7 @@ dataset = dset.ImageFolder(root=dataroot,
                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                            ]))
 # Create the dataloader
-print("Loading images")
+print("Loading images...")
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
                                          shuffle=True)
 
@@ -117,12 +117,14 @@ dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
 device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
 
 # Plot some training images
+'''
 real_batch = next(iter(dataloader))
-plt.figure(figsize=(8,8))
+plt.figure(figsize=(4,4))
 plt.axis("off")
 plt.title("Training Images")
-plt.imshow(np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=2, normalize=True).cpu(),(1,2,0)))
+plt.imshow(np.transpose(vutils.make_grid(real_batch[0].to(device)[:16], padding=2, normalize=True).cpu(),(1,2,0)))
 plt.savefig('data/results/training.png')
+'''
 
 # custom weights initialization called on netG and netD
 def weights_init(m):
@@ -273,7 +275,7 @@ criterion = nn.BCELoss()
 
 # Create batch of latent vectors that we will use to visualize
 #  the progression of the generator
-fixed_noise = torch.randn(64, nz, 1, 1, device=device)
+fixed_noise = torch.randn(8, nz, 1, 1, device=device)
 
 # Establish convention for real and fake labels during training
 real_label = 1.
@@ -359,20 +361,45 @@ for epoch in range(num_epochs):
         D_losses.append(errD.item())
         
         # Check how the generator is doing by saving G's output on fixed_noise
-        if (iters % 500 == 0) or ((epoch == num_epochs-1) and (i == len(dataloader)-1)):
-            with torch.no_grad():
-                fake = netG(fixed_noise).detach().cpu()
-            #vutils.save_image(fake, 'data/results/training/'+str(iters)+'.png')
-            img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
-
-        if (iters % 100 == 0):
+        '''
+        if (iters % 100 == 0) or ((epoch == num_epochs-1) and (i == len(dataloader)-1)):
             with torch.no_grad():
                 fake = netG(fixed_noise).detach().cpu()
             vutils.save_image(fake, 'data/results/training/'+str(iters)+'.png')
+            img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
 
-            
+        '''
+        with torch.no_grad():
+                fake = netG(fixed_noise).detach().cpu()
+        vutils.save_image(fake, 'data/results/training/'+str(iters)+'.png')
         iters += 1
 
+print("Generating using fixed noise...")
+
+with torch.no_grad():
+    fake = netG(fixed_noise).detach().cpu()
+vutils.save_image(fake, 'data/results/fixed_noise.png')
+
+print("Generating using new random noise...")
+
+for x in range(10):
+    rnoise = torch.randn(8, nz, 1, 1, device=device)
+    with torch.no_grad():
+        fake = netG(rnoise).detach().cpu()
+    vutils.save_image(fake, 'data/results/randoms/'+str(x)+'_random_noise.png')
+
+print("Saving model...")
+
+
+torch.save({
+        'generator_state_dict': netG.state_dict(),
+        'discriminator_state_dict': netD.state_dict(),
+        'optimizerD_state_dict': optimizerD.state_dict(),
+        'optimizerG_state_dict': optimizerG.state_dict(),
+        }, 'model/model.pt')
+
+
+print("Done")
 
 ######################################################################
 # Results
@@ -389,6 +416,7 @@ for epoch in range(num_epochs):
 # Below is a plot of D & G’s losses versus training iterations.
 # 
 
+'''
 plt.figure(figsize=(10,5))
 plt.title("Generator and Discriminator Loss During Training")
 plt.plot(G_losses,label="G")
@@ -398,7 +426,7 @@ plt.ylabel("Loss")
 plt.legend()
 plt.show()
 plt.savefig('data/results/gen_disc.png')
-
+'''
 
 ######################################################################
 # **Visualization of G’s progression**
@@ -410,16 +438,17 @@ plt.savefig('data/results/gen_disc.png')
 # 
 
 #%%capture
+'''
 fig = plt.figure(figsize=(8,8))
 plt.axis("off")
 ims = [[plt.imshow(np.transpose(i,(1,2,0)), animated=True)] for i in img_list]
-ani = animation.ArtistAnimation(fig, ims, interval=200, repeat_delay=200, blit=True)
+ani = animation.ArtistAnimation(fig, ims, interval=300, repeat_delay=300, blit=True)
 
 print("Saving animation...")
-ani.save('data/results/animation.gif', writer='PillowWriter', fps=12)
+ani.save('data/results/animation.gif', writer='PillowWriter', fps=15)
 
 #HTML(ani.to_jshtml())
-
+'''
 
 ######################################################################
 # **Real Images vs. Fake Images**
@@ -428,6 +457,7 @@ ani.save('data/results/animation.gif', writer='PillowWriter', fps=12)
 # side.
 # 
 
+'''
 # Grab a batch of real images from the dataloader
 real_batch = next(iter(dataloader))
 
@@ -436,7 +466,7 @@ plt.figure(figsize=(15,15))
 plt.subplot(1,2,1)
 plt.axis("off")
 plt.title("Real Images")
-plt.imshow(np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=5, normalize=True).cpu(),(1,2,0)))
+plt.imshow(np.transpose(vutils.make_grid(real_batch[0].to(device)[:16], padding=5, normalize=True).cpu(),(1,2,0)))
 
 # Plot the fake images from the last epoch
 plt.subplot(1,2,2)
@@ -445,6 +475,7 @@ plt.title("Fake Images")
 plt.imshow(np.transpose(img_list[-1],(1,2,0)))
 plt.show()
 plt.savefig('data/results/real_vs_fake.png')
+'''
 
 ######################################################################
 # Where to Go Next
